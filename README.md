@@ -30,6 +30,12 @@ near-identical, overlapping petals; the odd one out stands apart:
 
 <p align="center"><img src="media/sentence_wave.png" width="500"></p>
 
+Same function, unrolled: angle on the x-axis instead of wrapped around a
+circle. No new information over the polar view — just easier to read the
+raw shape and compare peaks side by side:
+
+<p align="center"><img src="media/unrolled_wave.png" width="900"></p>
+
 ## Why even harmonics, specifically
 
 An even-order term satisfies `f(θ + π) = f(θ)` — the shape is symmetric
@@ -126,6 +132,9 @@ python -m wavembed.visualize --sentence "the stock market fell sharply today"
 
 # overlay every word of a sentence on the same polar plot, one color each
 python -m wavembed.sentence --sentence "stock market shares rose today"
+
+# same idea, unrolled onto a plain x/y plot instead of polar
+python -m wavembed.unrolled --sentence "google war olympic president"
 ```
 
 For your own corpus instead of AG News, use `corpus.build_corpus_from_texts(texts)`.
