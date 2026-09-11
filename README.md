@@ -124,6 +124,39 @@ Regenerate their embedded data with:
 python -m wavembed.export_json
 ```
 
+## Related work — where this fits
+
+word2vec (2013) is old. This project doesn't pretend otherwise, and isn't
+trying to compete with what's actually used in production today:
+
+- **word2vec (2013) / GloVe (2014)** — static embeddings: one fixed vector
+  per word, regardless of context. This is the era `wavembed` borrows its
+  training objective from (skip-gram + negative sampling).
+- **fastText (2016)** — same static idea, extended with subword
+  (character n-gram) information, better on rare/unseen words.
+- **ELMo (2018) → BERT and successors** — the real shift: *contextual*
+  embeddings. The same word gets a different vector depending on the
+  sentence it's in ("bank" of a river vs. a "bank" account), computed by
+  a Transformer rather than looked up in a fixed table.
+- **Today** — production-grade text embeddings (OpenAI/Cohere/Google
+  embedding APIs, open models like E5, BGE, GTE) are built on large
+  pretrained Transformers, contextual, hundreds to thousands of
+  dimensions, trained on web-scale data with contrastive objectives far
+  more sophisticated than plain negative sampling.
+
+`wavembed` sits deliberately outside that progression. It isn't a step
+toward beating E5 or BGE — 6 numbers per word, a single small corpus, and
+no context-sensitivity couldn't plausibly compete on raw quality with
+models trained on billions of tokens. The actual question being tested is
+orthogonal to "which embedding is best today": **does swapping the
+*representation* of a classical, well-understood objective (skip-gram)
+from an arbitrary vector to a physically interpretable wave preserve the
+useful properties of embeddings (real relational structure, meaningful
+similarity, analogy) while adding new ones (drawability, exact
+closed-form correlation, physical/analog realizability)?** word2vec is
+used here as a controlled, minimal, easy-to-reason-about baseline for
+that question — not as a target to surpass.
+
 ## Status
 
 This is an early, deliberately closed experiment (~8000-word vocabulary,
