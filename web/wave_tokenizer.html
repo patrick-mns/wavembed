@@ -180,6 +180,37 @@
   #wave-canvas.polar { aspect-ratio: 1 / 1; max-width: 460px; }
   #wave-canvas.linear { aspect-ratio: 2.1 / 1; max-width: 620px; }
 
+  .raw-table {
+    margin-top: 16px;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }
+
+  .raw-row {
+    display: flex;
+    align-items: baseline;
+    gap: 10px;
+    font-family: var(--mono);
+    font-size: 12px;
+    background: var(--panel-2);
+    border: 1px solid var(--line);
+    border-radius: 7px;
+    padding: 7px 12px;
+  }
+
+  .raw-row .word {
+    min-width: 76px;
+    font-weight: 600;
+  }
+
+  .raw-row .nums {
+    color: var(--muted);
+    font-variant-numeric: tabular-nums;
+    overflow-x: auto;
+    white-space: nowrap;
+  }
+
   .try-block {
     margin-top: 20px;
     padding-top: 16px;
@@ -253,6 +284,8 @@
     <div class="stage">
       <canvas id="wave-canvas" class="polar" width="920" height="920"></canvas>
     </div>
+
+    <div class="raw-table" id="raw-table"></div>
 
     <div class="try-block">
       <p class="try-label">example sentences</p>
@@ -427,7 +460,19 @@ function renderEmpty() {
 
 const statusLine = document.getElementById("status-line");
 const tokenStrip = document.getElementById("token-strip");
+const rawTable = document.getElementById("raw-table");
 const input = document.getElementById("sentence-input");
+
+function renderRawTable(visible, colorOf) {
+  rawTable.innerHTML = visible.map((w) => {
+    const raw = EMBEDDINGS[w];
+    const nums = raw.map((v) => v.toFixed(2)).join(", ");
+    return `<div class="raw-row">
+      <span class="word" style="color:${colorOf(w)}">${w}</span>
+      <span class="nums">[${nums}]</span>
+    </div>`;
+  }).join("");
+}
 
 function tokenize(text) {
   return (text.toLowerCase().match(/[a-z]+/g) || []).slice(0, MAX_TOKENS);
@@ -468,6 +513,7 @@ function refresh() {
   if (tokens.length === 0) {
     statusLine.textContent = "";
     renderEmpty();
+    rawTable.innerHTML = "";
     return;
   }
 
@@ -480,16 +526,18 @@ function refresh() {
       ? "no token selected"
       : `no recognized tokens (out of vocabulary: ${missing.join(", ")})`;
     renderEmpty();
+    rawTable.innerHTML = "";
     return;
   }
 
-  const curves = visible.map((w, i) => {
-    const idx = found.indexOf(w);
+  const colorOf = (w) => PALETTE[found.indexOf(w) % PALETTE.length];
+  const curves = visible.map((w) => {
     const profile = computeProfile(EMBEDDINGS[w]);
-    return { norms: normalized01(profile), color: PALETTE[idx % PALETTE.length], word: w };
+    return { norms: normalized01(profile), color: colorOf(w), word: w };
   });
 
   render(curves);
+  renderRawTable(visible, colorOf);
   statusLine.textContent = `${tokens.length} token(s) · ${found.length} in vocabulary` +
     (missing.length ? ` · out of vocab: ${missing.join(", ")}` : "");
 }
