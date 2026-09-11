@@ -1,0 +1,3 @@
+torch>=2.8
+matplotlib>=3.9
+datasets>=4.5
