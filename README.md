@@ -101,13 +101,24 @@ python -m wavembed.visualize --sentence "the stock market fell sharply today"
 
 For your own corpus instead of AG News, use `corpus.build_corpus_from_texts(texts)`.
 
-## Interactive demo
+## Interactive demos
 
-`web/wave_tokenizer.html` is a self-contained page (no server, no
-backend) that recomputes the exact same harmonic formula in JavaScript,
-in the browser, over the real trained weights. Open it directly, type a
-sentence, and watch it split into tokens — each one its own live wave, in
-polar or unrolled-horizontal view. Regenerate its embedded data with:
+Both pages are self-contained (no server, no backend) and recompute the
+exact same harmonic formula in JavaScript, in the browser, over the real
+trained weights.
+
+- `web/wave_tokenizer.html` — type a sentence and watch it split into
+  tokens, each one its own live wave, in polar or unrolled-horizontal
+  view.
+- `web/wave_calculator.html` — pick two words and watch the four basic
+  operations act on their waves: **sum** (interference — agreement
+  reinforces, disagreement cancels), **difference** (isolates what's in A
+  but not B — two nearly-identical words like `stock`/`market` collapse
+  to a residual only ~20% the size of either original), **product**
+  (frequency mixing), **quotient** (spikes visibly wherever B is near
+  zero).
+
+Regenerate their embedded data with:
 
 ```bash
 python -m wavembed.export_json
