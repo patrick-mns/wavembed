@@ -19,6 +19,11 @@ visibly similar shapes, because they're trained to.
 
 <p align="center"><img src="media/token_waves.png" width="900"></p>
 
+Unrelated words, by contrast, end up with visibly distinct shapes — no
+two of these four share a lobe count or orientation:
+
+<p align="center"><img src="media/contrasting_words.png" width="900"></p>
+
 ## Why even harmonics, specifically
 
 An even-order term satisfies `f(θ + π) = f(θ)` — the shape is symmetric
@@ -61,6 +66,21 @@ their wave correlation. `model.py`'s `similarity()` does exactly this.
   concepts (AM/FM-style modulation) than to *blending* them (a weighted
   average). A matrix only has one natural combination operator (weighted
   sum); a wave has two, with different meanings.
+
+**Subtraction makes the interference argument concrete.** Subtracting one
+word's wave from another's isolates what's left after their shared shape
+cancels out — and how much survives tracks correlation directly:
+
+| pair | correlation | amplitude of A − B |
+|---|---|---|
+| `stock` − `market` (near-identical) | 0.988 | **20%** of either original — most of the shape cancels |
+| `google` − `war` (unrelated, slightly anti-correlated) | -0.241 | **181%** of either original — nothing cancels, it reinforces instead |
+
+This isn't tuned to look nice — it's a direct consequence of subtracting
+two functions built from the same orthogonal basis: the more two waves
+agree, the more they cancel when subtracted; the more they disagree
+(especially when negatively correlated), the more the difference grows
+past either input alone.
 
 ## Results
 
