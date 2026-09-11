@@ -24,6 +24,12 @@ two of these four share a lobe count or orientation:
 
 <p align="center"><img src="media/contrasting_words.png" width="900"></p>
 
+A whole sentence at once, same idea: every word's wave drawn on the same
+polar plot, each in its own color. Words from the same topic land as
+near-identical, overlapping petals; the odd one out stands apart:
+
+<p align="center"><img src="media/sentence_wave.png" width="500"></p>
+
 ## Why even harmonics, specifically
 
 An even-order term satisfies `f(θ + π) = f(θ)` — the shape is symmetric
@@ -117,6 +123,9 @@ python -m wavembed.similarity
 
 # draw each token of a sentence as its own wave
 python -m wavembed.visualize --sentence "the stock market fell sharply today"
+
+# overlay every word of a sentence on the same polar plot, one color each
+python -m wavembed.sentence --sentence "stock market shares rose today"
 ```
 
 For your own corpus instead of AG News, use `corpus.build_corpus_from_texts(texts)`.
