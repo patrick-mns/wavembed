@@ -1,0 +1,27 @@
+[
+  {
+    "name": "ag_news_6",
+    "label": "AG News \u00b7 6 numbers/word",
+    "file": "data/ag_news_6.json"
+  },
+  {
+    "name": "text8_6",
+    "label": "text8 \u00b7 6 numbers/word",
+    "file": "data/text8_6.json"
+  },
+  {
+    "name": "text8_12",
+    "label": "text8 \u00b7 12 numbers/word",
+    "file": "data/text8_12.json"
+  },
+  {
+    "name": "text8_24",
+    "label": "text8 \u00b7 24 numbers/word",
+    "file": "data/text8_24.json"
+  },
+  {
+    "name": "text8_48",
+    "label": "text8 \u00b7 48 numbers/word",
+    "file": "data/text8_48.json"
+  }
+]

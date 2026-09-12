@@ -29,6 +29,10 @@ def build_vocab(texts: list[str], vocab_size: int) -> dict[str, int]:
     counter = Counter()
     for t in texts:
         counter.update(tokenize(t))
+    return _vocab_from_counter(counter, vocab_size)
+
+
+def _vocab_from_counter(counter: Counter, vocab_size: int) -> dict[str, int]:
     most_common = [w for w, _ in counter.most_common(vocab_size - 2)]
     vocab = {PAD: 0, UNK: 1}
     for w in most_common:
@@ -82,6 +86,43 @@ def build_corpus(vocab_size: int = 8000, n_docs: int = 60000, window: int = 4, s
 
     ds = load_dataset("ag_news")["train"].shuffle(seed=seed).select(range(n_docs))
     return build_corpus_from_texts(ds["text"], vocab_size=vocab_size, window=window)
+
+
+def build_corpus_text8(vocab_size: int = 30000, window: int = 5, chunk_size: int = 10000,
+                        max_words: int | None = None):
+    """Convenience: pulls text8 (~17M tokens of cleaned Wikipedia text, the
+    classic word2vec benchmark corpus) via HF `datasets`, ~100x more text
+    than the AG News default. It's one giant pre-tokenized string (already
+    lowercased, punctuation stripped) rather than a list of documents, so
+    we chunk it into fixed-size blocks and treat each block as a
+    "document" for skip-gram pair generation — negligible loss of context
+    at each chunk boundary, but keeps memory bounded instead of building
+    one array over all 17M tokens at once."""
+    from datasets import load_dataset
+
+    text = load_dataset("afmck/text8")["train"][0]["text"]
+    words = text.split()
+    if max_words is not None:
+        words = words[:max_words]
+
+    counter = Counter(words)
+    vocab = _vocab_from_counter(counter, vocab_size)
+    unk = vocab[UNK]
+    all_ids = np.array([vocab.get(w, unk) for w in words], dtype=np.int64)
+
+    target_chunks, context_chunks = [], []
+    for start in range(0, len(all_ids), chunk_size):
+        block = all_ids[start:start + chunk_size]
+        block = block[block != unk]
+        if len(block) < 2:
+            continue
+        t, c = _pairs_for_document(block, window)
+        target_chunks.extend(t)
+        context_chunks.extend(c)
+
+    targets = np.concatenate(target_chunks) if target_chunks else np.empty(0, dtype=np.int64)
+    contexts = np.concatenate(context_chunks) if context_chunks else np.empty(0, dtype=np.int64)
+    return vocab, torch.from_numpy(targets).long(), torch.from_numpy(contexts).long()
 
 
 def build_negative_sampler(vocab: dict, targets: torch.Tensor, power: float = 0.75) -> torch.Tensor:
