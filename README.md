@@ -276,9 +276,15 @@ that question — not as a target to surpass.
 
 ## Status
 
-This is an early, deliberately closed experiment (~8000-word vocabulary,
-6-number-per-word capacity, single corpus) meant to validate the core
-idea before scaling it into a proper paper. Known open questions:
-representational capacity at larger vocabularies, comparison against
-standard word2vec/GloVe on established benchmarks (e.g. WordSim-353), and
-formal evaluation beyond spot-checked word pairs.
+Validated against a real, matched-budget word2vec baseline (see the
+[benchmark](#benchmark-wordsim-353--simlex-999-vs-a-real-word2vec-on-the-same-corpus)
+above) rather than spot-checked word pairs alone: trained on two corpora
+(AG News, text8), 30k-word vocabulary, capacity swept from 6 to 48
+numbers/word. wavembed trails a same-budget word2vec at very low capacity
+(6 numbers) but overtakes it on WordSim-353 from 24 numbers/word onward,
+using half the trainable numbers per word word2vec needs for the same
+budget (one shared table vs. word2vec's separate input/context
+matrices). Known open questions: whether the trend keeps climbing past
+48 numbers/word or saturates, behavior at vocabularies beyond 30k,
+performance on other standard benchmarks (e.g. word analogy), and the
+context-sensitivity gap noted in "Related work" above.
